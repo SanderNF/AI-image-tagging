@@ -8,3 +8,4 @@ requests
 FLAX
 huggingface-hub<2.0
 yolov10
+flask
