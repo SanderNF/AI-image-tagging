@@ -1,26 +1,28 @@
 import requests
 from PIL import Image
-from transformers import AutoImageProcessor, AutoModel
+from transformers import AutoImageProcessor, FlaxAutoModel, AutoModel
+
 
 
 def aimv2(url):
     image = Image.open(requests.get(url, stream=True).raw)
 
     processor = AutoImageProcessor.from_pretrained(
-        "apple/aimv2-large-patch14-224",
-        revision="ac764a25c832c7dc5e11871daa588e98e3cdbfb7",
+        "apple/aimv2-1B-patch14-448",
+        revision="7f292735d3a07a911559c0fabb3ad3e9d141713f",
     )
     model = AutoModel.from_pretrained(
-        "apple/aimv2-large-patch14-224",
-        revision="ac764a25c832c7dc5e11871daa588e98e3cdbfb7",
+        "apple/aimv2-1B-patch14-448",
+        revision="7f292735d3a07a911559c0fabb3ad3e9d141713f",
         trust_remote_code=True,
     )
 
     inputs = processor(images=image, return_tensors="pt")
     outputs = model(**inputs)
-    return outputs
+    embedding = outputs.last_hidden_state[:, 0, :]  # CLS token
+    return outputs, embedding.detach().cpu().numpy()
 
 if __name__ == "__main__":
-    url = 'http://images.cocodataset.org/val2017/000000020247.jpg'
+    url = 'http://images.cocodataset.org/val2017/000000039769.jpg'
     outputs = aimv2(url)
-    print(outputs)
+    print("returned", outputs)
