@@ -4,16 +4,147 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Image Tagging</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #fafafa;
+            color: #333;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        .form-container {
+            background: #fff;
+            padding: 24px;
+            border-radius: 12px;
+            max-width: 700px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+            margin-bottom: 25px;
+        }
+
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            align-items: flex-start;
+        }
+
+        .input-group {
+            flex: 1 1 280px;
+            min-width: 260px;
+        }
+
+        .preview-container {
+            flex: 0 0 180px;
+            text-align: center;
+        }
+
+        .form-container label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #444;
+        }
+
+        input[type="file"] {
+            width: auto;
+            max-width: 260px;
+            padding: 10px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            cursor: pointer;
+            background: #fafafa;
+            transition: border 0.2s ease, background 0.2s ease;
+        }
+
+        input[type="file"]:hover {
+            border-color: #a5b4fc;
+            background: #ffffff;
+        }
+
+        button {
+            width: 100%;
+            max-width: 260px;
+            background: #007bff;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.25s ease;
+            margin-top: 14px;
+        }
+
+        button:hover {
+            background: #0056b3;
+        }
+
+        .preview-container img {
+            max-width: 160px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+        }
+
+        .tagged-images {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .tagged-images img {
+            border: 2px solid #ccc;
+            padding: 5px;
+            border-radius: 5px;
+        }
+    </style>
 </head>
 <body>
+    <script>
+    window.addEventListener('DOMContentLoaded', () => {
+        const fileInput = document.getElementById('input');
+        const preview = document.getElementById('preview');
+
+        if (preview) {
+            preview.style.display = 'none';
+        }
+
+        fileInput.addEventListener('change', function (e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function (event) {
+                if (preview) {
+                    preview.src = event.target.result;
+                    preview.style.display = 'block';
+                }
+            };
+            reader.readAsDataURL(file);
+        });
+    });
+    </script>
     <h1>Image Tagging</h1>
-    <form action="/detect" method="post" enctype="multipart/form-data">
-        <input type="file" name="image" accept="image/*" required>
-        <button type="submit">Upload and Detect</button>
-    </form>
-    <div class="tagged images">
+    <div class="form-container">
+        <div class="form-row">
+            <div class="input-group">
+                <div>Upload an image to detect objects:</div>
+                <form action="/detect" method="post" enctype="multipart/form-data">
+                    <label for="input">Choose an image</label>
+                    <input id="input" type="file" name="image" accept="image/*" required>
+                    <button type="submit">Upload and Detect</button>
+                </form>
+            </div>
+            <div class="preview-container">
+                <img src="" alt="Preview" id="preview">
+            </div>
+        </div>
+    </div>
+    <div class="tagged-images">
         {% for image_url in image_urls %}
-                <h2>Tagged Image:</h2>
                 <img src="{{ image_url }}" alt="Tagged Image" style="max-width: 100%;">
         {% endfor %}
     </div>

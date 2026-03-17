@@ -153,7 +153,7 @@ def detect():
     result = overlay_img(image_path, results['good'])
     result.save(f"static/{image_file.filename}.png")
 
-    return redirect(url_for('display_result', filename=f"{image_file.filename}.png"))
+    return redirect(url_for('static', filename=f"{image_file.filename}.png"))
 
 
 if __name__ == "__main__":
