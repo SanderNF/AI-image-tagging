@@ -419,3 +419,5 @@ FodyWeavers.xsd
 /.venv
 /.vscode
 *.pt
+/runs/detect
+/detections.json
