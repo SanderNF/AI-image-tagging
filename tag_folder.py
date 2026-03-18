@@ -10,7 +10,7 @@ def in_tags(key, tags):
     try:
         return tags[key]    
     except KeyError:
-        #print(f"Key {key} not found in tags. Returning None.")
+        print(f"Key {key} not found in tags. Returning None.")
         return None
     
 def threshold_checker(detections, fallback_threshold=0.5):
@@ -19,12 +19,16 @@ def threshold_checker(detections, fallback_threshold=0.5):
     for det in detections:
         print(f"Checking detection: {det['class_name']} (ID: {det['class_id']}) with confidence {det['confidence']:.2f}")
         tag = in_tags(str(det['class_id']), tags)
+        print(f"Tag for class_id {det['class_id']}: {tag}")
         if tag and det['confidence'] > tag['confidence_threshold']:
             output['good'].append(det)
-        elif tag != None and det['confidence'] > fallback_threshold:
+            print(f"  -> GOOD: {det['class_name']} (ID: {det['class_id']}) with confidence {det['confidence']:.2f} exceeds threshold {tag['confidence_threshold']:.2f}")
+        elif tag == None and det['confidence'] > fallback_threshold:
             output['good'].append(det)
+            print(f"  -> GOOD (fallback): {det['class_name']} (ID: {det['class_id']}) with confidence {det['confidence']:.2f} exceeds fallback threshold {fallback_threshold:.2f}")
         else:
             output['bad'].append(det)
+            print(f"  -> BAD: {det['class_name']} (ID: {det['class_id']}) with confidence {det['confidence']:.2f} does not exceed fallback threshold {fallback_threshold:.2f}")
     return output
 
 def main():

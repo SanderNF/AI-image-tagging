@@ -422,3 +422,5 @@ FodyWeavers.xsd
 /runs/detect
 /detections.json
 *.pt
+/static
+/uploads
